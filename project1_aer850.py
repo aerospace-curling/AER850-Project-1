@@ -15,34 +15,53 @@ data=pd.read_csv("data/Project 1 Data.csv")
 import numpy as np
 import matplotlib.pyplot as plt
 
-#Creating a line graph of the Step number vs. movement in the Z direction
-plt.figure()
-plt.plot(data["Step"], data["Z"], color="blue", marker="o")
-plt.title("Z-axis Progression Across Steps")
-plt.xlabel("Step Number")
-plt.ylabel("Z-axis Progression")
-plt.show
+#Obtaining statistical data about the dataset and printing it
+print(data.describe())
 
-#Creating a line graph of the Step number vs. movement in the Y direction
+#Creating a scatter plot for movement in the z-axis versus the step number
 plt.figure()
-plt.plot(data["Step"], data["Y"], color="black", marker="o")
-plt.title("Y-axis Progression Across Steps")
-plt.xlabel("Step Number")
-plt.ylabel("Y-axis Progression")
-plt.show
-
-#Creating a line graph of the Step number vs. movement in the X direction
-plt.figure()
-plt.plot(data["Step"], data["X"], color="green", marker="o")
-plt.title("X-axis Progression Across Steps")
-plt.xlabel("Step Number")
-plt.ylabel("X-axis Progression")
-plt.show
-
-#Creating a scatter plot
-plt.figure()
-plt.scatter(data["Step"], data["Z"], c=data["Step"], cmap="Blues")
+plt.scatter(data["Step"], data["Z"], c=data["Step"])
 plt.title("Scatterplot of Z-movement across the Steps")
 plt.xlabel("Step Number")
 plt.ylabel("Z-axis movement")
 plt.show()
+
+#Creating a scatter plot for movement in the Y-axis versus the step number
+plt.figure()
+plt.scatter(data["Step"], data["Y"], c=data["Step"])
+plt.title("Scatterplot of Y-movement across the Steps")
+plt.xlabel("Step Number")
+plt.ylabel("Y-axis movement")
+plt.show()
+
+#Creating a scatter plot for movement in the X-axis versus the step number
+plt.figure()
+plt.scatter(data["Step"], data["X"], c=data["Step"])
+plt.title("Scatterplot of X-movement across the Steps")
+plt.xlabel("Step Number")
+plt.ylabel("X-axis movement")
+plt.show()
+
+#creating a histogram for the Z-movement to show distribution of movement size
+plt.figure()
+plt.hist(data['Z'], bins=20)
+plt.title("Histogram of Z-axis Movement Values")
+plt.xlabel("Z-axis movement")
+plt.ylabel("Frequency")
+plt.show
+
+#creating a histogram for the X-movement to show distribution of movement size
+plt.figure()
+plt.hist(data['X'], bins=20)
+plt.title("Histogram of X-axis Movement Values")
+plt.xlabel("X-axis movement")
+plt.ylabel("Frequency")
+plt.show
+
+#creating a histogram for the Y-movement to show distribution of movement size
+plt.figure()
+plt.hist(data['Y'], bins=20)
+plt.title("Histogram of Y-axis Movement Values")
+plt.xlabel("Y-axis movement")
+plt.ylabel("Frequency")
+plt.show
