@@ -84,3 +84,29 @@ plt.figure()
 sns.heatmap(np.abs(corr_matrix))
 plt.title("Heatmap of Correlation Matrix")
 plt.show
+
+
+#Step 4: Classification Model Development/Engineering
+
+#The data must be split into test and train data, which will be completed with the use of Stratified Shuffle Split
+#There is no requirement to put the data into bins being that it is already sorted into "Steps"
+from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
+
+for train_index, test_index in split.split(data, data["Step"]):
+    strat_train_set = data.loc[train_index]
+    strat_test_set = data.loc[test_index]
+    
+#to check if the splitting worked as was expected, the "Step" proportions are checked
+print("\nBelow is a check for the proportions of 'Steps' in the test data set:")
+print(strat_test_set["Step"].value_counts() / len(strat_test_set))
+print("\nThis is compared to the full data set:")
+print(data["Step"].value_counts() / len(data))
+
+    
+#now the "Step" attribute is removed so that the data can be put back to its original state
+for data in(strat_train_set, strat_test_set):
+    data.drop("Step", axis=1, inplace=True)
+    
+
+
