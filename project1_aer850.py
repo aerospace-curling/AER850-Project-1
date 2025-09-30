@@ -2,7 +2,7 @@
 
 #Part 1: Data Processing
 
-#reading the data and importing the pao"ndas library
+#reading the data and importing the pandas library
 import pandas as pd
 data=pd.read_csv("data/Project 1 Data.csv")
 #To check that reading the data is working correctly:
@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 #Obtaining statistical data about the dataset and printing it
+print("This is statistical data about the dataset:\n")
 print(data.describe())
 
 #Creating a scatter plot for movement in the z-axis versus the step number
@@ -64,4 +65,22 @@ plt.hist(data['Y'], bins=20)
 plt.title("Histogram of Y-axis Movement Values")
 plt.xlabel("Y-axis movement")
 plt.ylabel("Frequency")
+plt.show
+
+
+#Step 3: Correlation Analysis
+
+#importing the seaborn library
+import seaborn as sns
+
+#Computing the Pearson Correlation matrix
+corr_matrix = data.corr(method='pearson')
+
+#Printing the correlation 
+print("Correlation of features related to the Step:\n",corr_matrix["Step"])
+
+#Making the heatmap to make the correlation more identifiable
+plt.figure()
+sns.heatmap(np.abs(corr_matrix))
+plt.title("Heatmap of Correlation Matrix")
 plt.show
