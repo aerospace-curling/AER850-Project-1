@@ -103,10 +103,28 @@ print(strat_test_set["Step"].value_counts() / len(strat_test_set))
 print("\nThis is compared to the full data set:")
 print(data["Step"].value_counts() / len(data))
 
+#with the test and full data set having similar proprotions, it can be confirmed that the splitting was generally effective
+
     
 #now the "Step" attribute is removed so that the data can be put back to its original state
 for data in(strat_train_set, strat_test_set):
     data.drop("Step", axis=1, inplace=True)
     
+#We need to separate the target "Step" from the features
+#y_train = strat_train_set["Step"]
+#X_train = strat_train_set.drop(columns=["Step"])
+
+#y_test = strat_test_set["Step"]
+#X_test = strat_test_set.drop(columns=["Step"])
+    
+#Model 1, using Logistic Regression (being that the steps are categorical)
+# A pipeline is used to prevent data leakage and scale the data using StandardScaler. In addition, LinearRegression is imported.
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+
+pipeline1 = Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression())])
+
 
 
