@@ -13,7 +13,7 @@ data = data.dropna().reset_index(drop=True)
 
 #The data must be split into test and train data, which will be completed with the use of Stratified Shuffle Split
 #There is no requirement to put the data into bins being that it is already sorted into "Steps"
-from sklearn.model_selection import train_test_split, StratifiedShuffleSplit
+from sklearn.model_selection import StratifiedShuffleSplit
 split = StratifiedShuffleSplit(n_splits=1, test_size=0.2, random_state=42)
 
 for train_index, test_index in split.split(data, data["Step"]):
@@ -140,4 +140,24 @@ SVM_grid_search.fit(x_train, y_train)
 
 # The best parameters and score are printed out
 print("\nThe best parameters for SVM are:", SVM_grid_search.best_params_)
-print("\nThe best score for SVM is:", SVM_grid_search.best_score_)            
+print("\nThe best score for SVM is:", SVM_grid_search.best_score_)  
+
+#Now trying RandomForest model
+
+from sklearn.ensemble import RandomForestClassifier
+
+#creating the pipeline for RandomForest
+pipeline_randomforest = Pipeline([('scaler', StandardScaler()),('model', RandomForestClassifier(random_state=42))])      
+
+randomforest_param_grid = { 'model__n_estimators': [100],'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
+
+randomforest_grid_search=GridSearchCV(pipeline_randomforest,randomforest_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
+
+randomforest_grid_search.fit(x_train, y_train)   
+
+# The best parameters and score are printed out
+print("\nThe best parameters for RandomForest are:", randomforest_grid_search.best_params_)
+print("\nThe best score for RandomForest is:", randomforest_grid_search.best_score_) 
+
+
+    
