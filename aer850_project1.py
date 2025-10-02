@@ -33,4 +33,4 @@ print(data["Step"].value_counts() / len(data))
 y_train = strat_data_train['Step']
 x_train = strat_data_train.drop(columns=['Step'])
 y_test = strat_data_test['Step']
-x_test = strat_data_test.drop(columns=['Step'])
+x_test = strat_data_test.drop(columns=['Step'])            axs[i,j].hist(data[items[i]], bins=20)
