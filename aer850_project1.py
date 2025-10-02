@@ -74,5 +74,31 @@ for i in range(len(items)):
         else:
                             #removes x-axis ticks except those on the last row
                             axs[i, j].set_xticks([])
+                            
+
+
+#Step 3: Correlation Analysis
+
+#importing the seaborn library
+import seaborn as sns
+
+#Computing the Pearson Correlation matrix
+corr_matrix = strat_data_train.corr(method='pearson')
+
+#Printing the correlation 
+print("Correlation of features related to the Step:\n",corr_matrix["Step"])
+
+#Making the heatmap to make the correlation more identifiable
+plt.figure()
+sns.heatmap(np.abs(corr_matrix))
+plt.title("Heatmap of Correlation Matrix")
+plt.show
+
+#in order to determine if there are any highly collinear components, a masked correlation matrix is created
+# the threshold determined is 0.80
+plt.figure()
+plt.title('Masked Heatmap with Threshold of 0.80')
+corr_matrix_mask = np.abs(corr_matrix) < 0.80
+sns.heatmap(corr_matrix_mask)
 
                   
