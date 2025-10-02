@@ -92,7 +92,7 @@ print("Correlation of features related to the Step:\n",corr_matrix["Step"])
 plt.figure()
 sns.heatmap(np.abs(corr_matrix))
 plt.title("Heatmap of Correlation Matrix")
-plt.show
+plt.show()
 
 #in order to determine if there are any highly collinear components, a masked correlation matrix is created
 # the threshold determined is 0.80
@@ -100,5 +100,32 @@ plt.figure()
 plt.title('Masked Heatmap with Threshold of 0.80')
 corr_matrix_mask = np.abs(corr_matrix) < 0.80
 sns.heatmap(corr_matrix_mask)
+plt.show()
+
+#Step 4 Classification Model Development/Engineering
+
+#The first ML model used will be LogisticRegression through a Pipeline with StandardScaler
+
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import StratifiedKFold
+
+cv= StratifiedKFold(n_splits=5, random_state=42, shuffle=True)
+
+#creating the pipeline
+pipeline1 = Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression(max_iter=5000,random_state=42))])
+param_grid = {'model__C': [0.1, 1, 10, 100, 1000, 10000, 100000],'model__penalty': ['l2']}
+#Using GridSearch
+grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
+
+grid_search.fit(x_train, y_train)
+ 
+# The best parameters and score are printed out
+print("\nThe best parameters are:", grid_search.best_params_)
+print("\nThe best score is:", grid_search.best_score_)
+
+
 
                   
