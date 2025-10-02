@@ -116,7 +116,7 @@ cv= StratifiedKFold(n_splits=5, random_state=42, shuffle=True)
 
 #creating the pipeline
 pipeline1 = Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression(max_iter=5000,random_state=42))])
-param_grid = {'model__C': [0.1, 1, 10, 100, 1000, 10000, 100000],'model__penalty': ['l2']}
+param_grid = {'model__C': np.logspace(-3, 1, 3),'model__penalty': ['l2']}
 #Using GridSearch
 grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
 
@@ -126,6 +126,18 @@ grid_search.fit(x_train, y_train)
 print("\nThe best parameters are:", grid_search.best_params_)
 print("\nThe best score is:", grid_search.best_score_)
 
+#Now trying the second ML model, SVM
+from sklearn.svm import SVC
 
+#creating the pipeline for SVM
+pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC(max_iter=5000, random_state=42))])
+    
+SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 1, 3, 4, 5),'model__gamma': np.logspace(-3, 1, 3)}
 
-                  
+SVM_grid_search=GridSearchCV(pipeline_SVM,SVM_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
+
+SVM_grid_search.fit(x_train, y_train)    
+
+# The best parameters and score are printed out
+print("\nThe best parameters for SVM are:", SVM_grid_search.best_params_)
+print("\nThe best score for SVM is:", SVM_grid_search.best_score_)            
