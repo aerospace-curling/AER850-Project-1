@@ -132,7 +132,7 @@ from sklearn.svm import SVC
 #creating the pipeline for SVM
 pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC(max_iter=5000, random_state=42))])
     
-SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 1, 3, 4, 5),'model__gamma': np.logspace(-3, 1, 3)}
+SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
 
 SVM_grid_search=GridSearchCV(pipeline_SVM,SVM_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
 
@@ -159,5 +159,19 @@ randomforest_grid_search.fit(x_train, y_train)
 print("\nThe best parameters for RandomForest are:", randomforest_grid_search.best_params_)
 print("\nThe best score for RandomForest is:", randomforest_grid_search.best_score_) 
 
+#Now trying DecisionTree with RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.tree import DecisionTreeClassifier
 
+#creating the pipeline for DecisionTree
+pipeline_decisiontree= Pipeline([('scaler', StandardScaler()),('model', DecisionTreeClassifier(random_state=42))])
+
+decisiontree_param_distributions={'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
     
+decisiontree_random_search = RandomizedSearchCV(estimator=pipeline_decisiontree,param_distributions=decisiontree_param_distributions,n_iter=10,cv=cv,n_jobs=-1,random_state=42,verbose=1)
+
+decisiontree_random_search.fit(x_train, y_train)
+
+# The best parameters and score are printed out
+print("\nThe best parameters for Decision Tree with RandomSearch are:", decisiontree_random_search.best_params_)
+print("\nThe best score for Decision Tree with Random Search is:", decisiontree_random_search.best_score_) 
