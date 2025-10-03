@@ -1,4 +1,5 @@
 #Project 1 AER 850
+#Emily Peelar 501169755
 
 #Part 1: Data Processing and splitting the data into test and train data
 
@@ -34,6 +35,11 @@ y_train = strat_data_train['Step']
 x_train = strat_data_train.drop(columns=['Step'])
 y_test = strat_data_test['Step']
 x_test = strat_data_test.drop(columns=['Step'])
+
+
+
+
+
 
 #Part 2: Data Visualization
 
@@ -77,6 +83,9 @@ for i in range(len(items)):
                             
 
 
+
+
+
 #Step 3: Correlation Analysis
 
 #importing the seaborn library
@@ -101,6 +110,12 @@ plt.title('Masked Heatmap with Threshold of 0.80')
 corr_matrix_mask = np.abs(corr_matrix) < 0.80
 sns.heatmap(corr_matrix_mask)
 plt.show()
+
+
+
+
+
+
 
 #Step 4 Classification Model Development/Engineering
 
@@ -202,6 +217,10 @@ decisiontree_random_search.fit(x_train, y_train)
 # The best parameters and score are printed out
 print("\nThe best parameters for Decision Tree with RandomSearch are:", decisiontree_random_search.best_params_)
 print("\nThe best score for Decision Tree with Random Search is:", decisiontree_random_search.best_score_) 
+
+
+
+
 
 
 #Starting Step 5: Model Performance Analysis
@@ -326,3 +345,25 @@ disp=ConfusionMatrixDisplay(confusion_matrix=confusionmatrix_stacked,display_lab
 disp.plot(cmap="Blues")
 plt.title("Stacked Model Confusion Matrix")
 plt.show()
+
+
+
+#Step 7:
+    
+import joblib
+finalized_model = randomforest_grid_search.best_estimator_
+
+joblib.dump(finalized_model, "finalized_model_AER815_project1.joblib")
+
+model = joblib.load("finalized_model_AER815_project1.joblib")
+
+coordinates = np.array([[9.375,3.0625,1.51], [6.995,5.125,0.3875], [0,3.0625,1.93], [9.4,3,1.8],[9.4,3,1.3]])
+
+coordinates_dataframe = pd.DataFrame(coordinates, columns=["X","Y","Z"])
+
+predicted_steps = model.predict(coordinates)
+
+print("\n The predicted values for the matrices are summarized below:\n")
+for row in coordinates:
+    predicted_step = model.predict([row])[0]   # predict needs 2D input
+    print(row, "is predicted to be Step", predicted_step)
