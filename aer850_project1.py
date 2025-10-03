@@ -118,6 +118,9 @@ cv= StratifiedKFold(n_splits=5, random_state=42, shuffle=True)
 pipeline1 = Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression(max_iter=5000,random_state=42))])
 param_grid = {'model__C': np.logspace(-3, 1, 3),'model__penalty': ['l2']}
 #Using GridSearch
+#the best score using the line below is 0.9835053959522382
+grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1, scoring='f1_weighted')
+#the best score from below is 0.9840262350576536, which is slightlu improved
 grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
 
 grid_search.fit(x_train, y_train)
@@ -126,13 +129,21 @@ grid_search.fit(x_train, y_train)
 print("\nThe best parameters are:", grid_search.best_params_)
 print("\nThe best score is:", grid_search.best_score_)
 
+
+
+
 #Now trying the second ML model, SVM
 from sklearn.svm import SVC
 
 #creating the pipeline for SVM
 pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC(max_iter=5000, random_state=42))])
-    
-SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
+
+#this one is not as good, score is 0.9912937691738073    
+#SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
+#this one is not as good, score is 0.9840262350576536
+#SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-2, 3, 6),'model__gamma': np.logspace(-2, 3, 6)}
+#this one is the best , score is 0.9927324658838463
+SVM_param_grid={'model__kernel': ['linear','rbf'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
 
 SVM_grid_search=GridSearchCV(pipeline_SVM,SVM_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
 
@@ -140,16 +151,23 @@ SVM_grid_search.fit(x_train, y_train)
 
 # The best parameters and score are printed out
 print("\nThe best parameters for SVM are:", SVM_grid_search.best_params_)
-print("\nThe best score for SVM is:", SVM_grid_search.best_score_)  
+print("\nThe best score for SVM is:", SVM_grid_search.best_score_) 
+
+
+ 
 
 #Now trying RandomForest model
 
 from sklearn.ensemble import RandomForestClassifier
 
 #creating the pipeline for RandomForest
-pipeline_randomforest = Pipeline([('scaler', StandardScaler()),('model', RandomForestClassifier(random_state=42))])      
+#there is no need for Standardscaler because the tree splits based on thresholds
+pipeline_randomforest = Pipeline([('model', RandomForestClassifier(random_state=42))])      
 
-randomforest_param_grid = { 'model__n_estimators': [100],'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
+#the score from below is 0.992743044536126
+#randomforest_param_grid = { 'model__n_estimators': [100],'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
+#the same score is obtained with the code below which is 0.992743044536126
+randomforest_param_grid = { 'model__n_estimators': [100],'model__criterion': ['gini','entropy'], 'model__max_depth': [10,20,30,40],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 3],'model__max_features': ['sqrt', 'log2', None] }
 
 randomforest_grid_search=GridSearchCV(pipeline_randomforest,randomforest_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1)
 
@@ -159,19 +177,97 @@ randomforest_grid_search.fit(x_train, y_train)
 print("\nThe best parameters for RandomForest are:", randomforest_grid_search.best_params_)
 print("\nThe best score for RandomForest is:", randomforest_grid_search.best_score_) 
 
+
+
+
 #Now trying DecisionTree with RandomizedSearchCV
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.tree import DecisionTreeClassifier
 
 #creating the pipeline for DecisionTree
-pipeline_decisiontree= Pipeline([('scaler', StandardScaler()),('model', DecisionTreeClassifier(random_state=42))])
+pipeline_decisiontree= Pipeline([('model', DecisionTreeClassifier(random_state=42))])
 
-decisiontree_param_distributions={'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
-    
-decisiontree_random_search = RandomizedSearchCV(estimator=pipeline_decisiontree,param_distributions=decisiontree_param_distributions,n_iter=10,cv=cv,n_jobs=-1,random_state=42,verbose=1)
+#score from below 0.992743044536126
+#decisiontree_param_distributions={'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2', None] }
+#score from below 0.992743044536126, which did not change and therefore will be used
+decisiontree_param_distributions={'model__criterion': ['gini','entropy'], 'model__max_depth': [10,20,30,40],'model__min_samples_split': [2, 4, 5],'model__min_samples_leaf': [1, 2, 3],'model__max_features': ['sqrt', 'log2', None] }
+
+
+decisiontree_random_search = RandomizedSearchCV(estimator=pipeline_decisiontree,param_distributions=decisiontree_param_distributions,cv=cv,n_jobs=-1,random_state=42,verbose=1)
 
 decisiontree_random_search.fit(x_train, y_train)
 
 # The best parameters and score are printed out
 print("\nThe best parameters for Decision Tree with RandomSearch are:", decisiontree_random_search.best_params_)
 print("\nThe best score for Decision Tree with Random Search is:", decisiontree_random_search.best_score_) 
+
+
+#Starting Step 5: Model Performance Analysis
+from sklearn.metrics import f1_score
+
+
+
+#starting with logistic regression
+bestmodel_logisticregression=grid_search.best_estimator_
+y_pred = bestmodel_logisticregression.predict(x_test)
+
+f1_weighted_logisticregression = f1_score(y_test, y_pred, average='weighted')
+print("\nThe f1 score of logistic regression is:", f1_weighted_logisticregression)
+
+#now with SVM
+bestmodel_SVM=SVM_grid_search.best_estimator_
+y_pred_SVM = bestmodel_SVM.predict(x_test)
+
+f1_weighted_SVM = f1_score(y_test, y_pred_SVM, average='weighted')
+print("\nThe f1 score of SVM is:", f1_weighted_SVM)
+
+#now with the RandomForest model
+bestmodel_randomforest=randomforest_grid_search.best_estimator_
+y_pred_randomforest = bestmodel_randomforest.predict(x_test)
+
+f1_weighted_randomforest = f1_score(y_test, y_pred_randomforest, average='weighted')
+print("\nThe f1 score of the RandomForest is:", f1_weighted_randomforest)
+
+#now with the DecisionTree Model
+bestmodel_decisiontree=decisiontree_random_search.best_estimator_
+y_pred_decisiontree = bestmodel_decisiontree.predict(x_test)
+
+f1_weighted_decisiontree = f1_score(y_test, y_pred_decisiontree, average='weighted')
+print("\nThe f1 score of the DecisionTree is:", f1_weighted_decisiontree)
+
+
+
+
+#now doing the precision score
+from sklearn.metrics import precision_score
+
+precision_weighted_logistic = precision_score(y_test, y_pred, average='weighted')
+print("\nThe precision score of the Logistic Regression is:", precision_weighted_logistic)
+
+precision_weighted_SVM = precision_score(y_test, y_pred_SVM, average='weighted')
+print("\nThe precision score of the SVM is:", precision_weighted_SVM)
+
+precision_weighted_randomforest = precision_score(y_test, y_pred_randomforest, average='weighted')
+print("\nThe precision score of the RandomForest is:", precision_weighted_randomforest)
+
+precision_weighted_decisiontree = precision_score(y_test, y_pred_decisiontree, average='weighted')
+print("\nThe precision score of the DecisionTree is:", precision_weighted_decisiontree)
+
+
+
+#now doing the accuracy score
+from sklearn.metrics import accuracy_score
+
+accuracy_logistic = accuracy_score(y_test, y_pred)
+print("\nThe accuracy score of the Logistic Regression is:", accuracy_logistic)
+
+accuracy_SVM = accuracy_score(y_test, y_pred_SVM)
+print("\nThe accuracy score of the SVM is:", accuracy_SVM)
+
+accuracy_randomforest = accuracy_score(y_test, y_pred_randomforest)
+print("\nThe accuracy score of the RandomForest is:", accuracy_randomforest)
+
+accuracy_decisiontree = accuracy_score(y_test, y_pred_decisiontree)
+print("\nThe accuracy score of the DecisionTree is:", accuracy_decisiontree)
+
+
