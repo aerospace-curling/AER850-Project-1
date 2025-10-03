@@ -154,6 +154,7 @@ print("\nThe best parameters for SVM are:", SVM_grid_search.best_params_)
 print("\nThe best score for SVM is:", SVM_grid_search.best_score_) 
 
 
+
  
 
 #Now trying RandomForest model
@@ -207,6 +208,7 @@ print("\nThe best score for Decision Tree with Random Search is:", decisiontree_
 from sklearn.metrics import f1_score
 
 
+#starting with the f1score
 
 #starting with logistic regression
 bestmodel_logisticregression=grid_search.best_estimator_
@@ -288,6 +290,39 @@ plt.title("Random Forest Confusion Matrix")
 plt.show()
 
 
+
+
+
 #Step 6: Stacked Model Performance Analysis
 
+#starting with using the stacked model and importing the StackingClassifier
+#logistic regression and random forest are used because they both have accuracy, f1 scores, and precision of 1. They are also very different types of classifiers, which is important for the stacked model
+from sklearn.ensemble import StackingClassifier
 
+estimators = [("rf", randomforest_grid_search.best_estimator_),("lr", grid_search.best_estimator_)   ]
+
+
+classifier = StackingClassifier(estimators=estimators,final_estimator=LogisticRegression(max_iter=5000,random_state=42), n_jobs=-1)
+
+classifier.fit(x_train,y_train)
+
+prediction_y_stacked= classifier.predict(x_test)
+
+#determining the scores
+f1_weighted_stacked = f1_score(y_test, prediction_y_stacked, average='weighted')
+print("\nThe f1 score of the Stacked Model is:", f1_weighted_stacked)
+
+precision_weighted_stacked = precision_score(y_test, prediction_y_stacked, average='weighted')
+print("\nThe precision score of the Stacked Model is:", precision_weighted_stacked)
+
+accuracy_stacked = accuracy_score(y_test, prediction_y_stacked)
+print("\nThe accuracy score of the Stacked Model is:", accuracy_stacked)
+
+#now to make the confusion matrix
+confusionmatrix_stacked = confusion_matrix(y_test,prediction_y_stacked)
+print("\n Stacked Model Confusion Matrix:\n", confusionmatrix_stacked)
+
+disp=ConfusionMatrixDisplay(confusion_matrix=confusionmatrix_stacked,display_labels=range(1,14))
+disp.plot(cmap="Blues")
+plt.title("Stacked Model Confusion Matrix")
+plt.show()
