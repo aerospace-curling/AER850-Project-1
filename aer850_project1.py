@@ -1,6 +1,9 @@
 #Project 1 AER 850
 #Emily Peelar 501169755
 
+#Project 1 AER 850
+#Emily Peelar 501169755
+
 #Part 1: Data Processing and splitting the data into test and train data
 
 #reading the data and importing the pandas library
@@ -107,7 +110,7 @@ plt.show()
 # the threshold determined is 0.80
 plt.figure()
 plt.title('Masked Heatmap with Threshold of 0.80')
-corr_matrix_mask = np.abs(corr_matrix) < 0.80
+corr_matrix_mask = np.abs(corr_matrix) >= 0.80
 sns.heatmap(corr_matrix_mask)
 plt.show()
 
@@ -131,13 +134,11 @@ cv= StratifiedKFold(n_splits=5, random_state=42, shuffle=True)
 
 #creating the pipeline
 pipeline1 = Pipeline([('scaler', StandardScaler()), ('model', LogisticRegression(max_iter=5000,random_state=42))])
-
-#this is the first test, with the score using the line below is 0.9835053959522382
-#param_grid = {'model__C': np.logspace(-3, 1, 3),'model__penalty': ['l2']}
-#this is the second test, with a score of 0.9835053959522382
-param_grid = {'model__C': np.logspace(-3, 1, 5),'model__penalty': ['l2']}
+param_grid = {'model__C': np.logspace(-3, 1, 3),'model__penalty': ['l2']}
 #Using GridSearch
-
+#the best score using the line below is 0.9835053959522382
+#grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1, scoring='f1_weighted')
+#the best score from below is 0.9840262350576536, which is slightly improved
 grid_search=GridSearchCV(pipeline1,param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1, scoring='f1_weighted')
 
 grid_search.fit(x_train, y_train)
@@ -160,7 +161,7 @@ pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC(random_state
 #this one is not as good, score is 0.9840262350576536
 #SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-2, 3, 6),'model__gamma': np.logspace(-2, 3, 6)}
 #this one is the best , score is 0.9926632848562396
-SVM_param_grid={'model__kernel': ['linear','rbf'],'model__C':np.logspace(-3, 1, 5),'model__gamma': np.logspace(-3, 1, 3)}
+SVM_param_grid={'model__kernel': ['linear','rbf'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
 
 SVM_grid_search=GridSearchCV(pipeline_SVM,SVM_param_grid,cv=cv, n_jobs=-1, refit=True, verbose=1,scoring='f1_weighted')
 
@@ -350,7 +351,7 @@ plt.show()
 
 
 
-#Step 7: Model Evaluation
+#Step 7:
     
 import joblib
 finalized_model = randomforest_grid_search.best_estimator_
