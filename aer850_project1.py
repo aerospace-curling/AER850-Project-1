@@ -1,9 +1,6 @@
 #Project 1 AER 850
 #Emily Peelar 501169755
 
-#Project 1 AER 850
-#Emily Peelar 501169755
-
 #Part 1: Data Processing and splitting the data into test and train data
 
 #reading the data and importing the pandas library
@@ -154,7 +151,7 @@ print("\nThe best score is:", grid_search.best_score_)
 from sklearn.svm import SVC
 
 #creating the pipeline for SVM
-pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC(random_state=42))])
+pipeline_SVM = Pipeline([('scaler', StandardScaler()),('model', SVC())])
 
 #this one is not as good, score is 0.9912937691738073    
 #SVM_param_grid={'model__kernel': ['linear'],'model__C':np.logspace(-3, 3, 5),'model__gamma': np.logspace(-3, 1, 3)}
@@ -208,7 +205,7 @@ pipeline_decisiontree= Pipeline([('model', DecisionTreeClassifier(random_state=4
 
 
 
-#score from below .9814727773294918
+#score from below 0.9814727773294918
 #decisiontree_param_distributions={'model__criterion': ['gini'], 'model__max_depth': [None],'model__min_samples_split': [2, 5, 10],'model__min_samples_leaf': [1, 2, 4],'model__max_features': ['sqrt', 'log2'] }
 #score from below is the better score, which will be used 0.9831771512574269
 decisiontree_param_distributions={'model__criterion': ['gini','entropy'], 'model__max_depth': [5,10,20],'model__min_samples_split': [2,5,10],'model__min_samples_leaf': [1, 2, 3],'model__max_features': ['sqrt', 'log2'] }
