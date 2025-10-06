@@ -10,7 +10,7 @@ data=pd.read_csv("data/Project 1 Data.csv")
 #print(data.head())
 
 # Remove any data that is missing in the set
-data = data.dropna().reset_index(drop=True)
+data = data.dropna().reset_index(drop=True) 
 
 #The data must be split into test and train data, which will be completed with the use of Stratified Shuffle Split
 #There is no requirement to put the data into bins being that it is already sorted into "Steps"
@@ -82,6 +82,25 @@ for i in range(len(items)):
                             axs[i, j].set_xticks([])
                             
 
+#in order to visualize the relationship in 3D, a 3D plot is created
+from mpl_toolkits import mplot3d
+
+plt.figure()
+threeDfigure= plt.figure
+axes = plt.axes(projection='3d')
+
+scatterplot= axes.scatter(strat_data_train['X'], strat_data_train['Y'], strat_data_train['Z'], c=strat_data_train['Step'])
+axes.set_xlabel("X")
+axes.set_ylabel("Y")
+axes.set_zlabel("Z")
+fig.colorbar(scatterplot, ax=axes, label='Step')
+
+plt.show()
+
+
+
+
+
 
 
 
@@ -99,7 +118,8 @@ print("Correlation of features related to the Step:\n",corr_matrix["Step"])
 
 #Making the heatmap to make the correlation more identifiable
 plt.figure()
-sns.heatmap(np.abs(corr_matrix))
+#the heatmap will include the numbers obtained and their value to two decimal places
+sns.heatmap(np.abs(corr_matrix), annot=True, fmt=".2f")
 plt.title("Heatmap of Correlation Matrix")
 plt.show()
 
@@ -108,8 +128,10 @@ plt.show()
 plt.figure()
 plt.title('Masked Heatmap with Threshold of 0.80')
 corr_matrix_mask = np.abs(corr_matrix) >= 0.80
-sns.heatmap(corr_matrix_mask)
+sns.heatmap(corr_matrix_mask, annot=True, fmt=".2f")
 plt.show()
+
+
 
 
 
