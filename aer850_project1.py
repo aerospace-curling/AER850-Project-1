@@ -223,6 +223,8 @@ print("\nThe best score for Decision Tree with Random Search is:", decisiontree_
 
 
 
+
+
 #Starting Step 5: Model Performance Analysis
 from sklearn.metrics import f1_score
 
@@ -353,17 +355,17 @@ plt.show()
 import joblib
 finalized_model = randomforest_grid_search.best_estimator_
 
-joblib.dump(finalized_model, "finalized_model_AER815_project1.joblib")
+joblib.dump(finalized_model, "finalized_model_AER850_project1.joblib")
 
-model = joblib.load("finalized_model_AER815_project1.joblib")
+model = joblib.load("finalized_model_AER850_project1.joblib")
 
 coordinates = np.array([[9.375,3.0625,1.51], [6.995,5.125,0.3875], [0,3.0625,1.93], [9.4,3,1.8],[9.4,3,1.3]])
 
-coordinates_dataframe = pd.DataFrame(coordinates, columns=["X","Y","Z"])
+X_new = pd.DataFrame(coordinates, columns=x_train.columns)
 
-predicted_steps = model.predict(coordinates)
+predicted_steps = model.predict(X_new)
 
-print("\n The predicted values for the matrices are summarized below:\n")
-for row in coordinates:
-    predicted_step = model.predict([row])[0]   # predict needs 2D input
-    print(row, "is predicted to be Step", predicted_step)
+for i in range(len(X_new)):
+    step = model.predict(X_new.iloc[[i]])[0]  
+    print(X_new.iloc[i].values.tolist(), "is predicted to be Step", step)
+    
