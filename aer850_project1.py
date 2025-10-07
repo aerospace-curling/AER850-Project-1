@@ -83,18 +83,18 @@ for i in range(len(items)):
                             
 
 #in order to visualize the relationship in 3D, a 3D plot is created
-from mpl_toolkits import mplot3d
 
-plt.figure()
-threeDfigure= plt.figure
+fig=plt.figure()
 axes = plt.axes(projection='3d')
 
 scatterplot= axes.scatter(strat_data_train['X'], strat_data_train['Y'], strat_data_train['Z'], c=strat_data_train['Step'])
 axes.set_xlabel("X")
 axes.set_ylabel("Y")
 axes.set_zlabel("Z")
-fig.colorbar(scatterplot, ax=axes, label='Step')
 
+#moving the colorbar over so that it does not coincide with the z-axis
+fig.colorbar(scatterplot, ax=axes, label='Step', fraction=0.046, pad=0.2)
+plt.title("3D Raw Data Visualization")
 plt.show()
 
 
@@ -129,6 +129,20 @@ plt.figure()
 plt.title('Masked Heatmap with Threshold of 0.80')
 corr_matrix_mask = np.abs(corr_matrix) >= 0.80
 sns.heatmap(corr_matrix_mask, annot=True, fmt=".2f")
+plt.show()
+
+
+#in order to visualize the correlation in another manner, a scatterplot with different colours for each point is used
+plt.figure()
+
+plt.scatter(strat_data_train['X'], strat_data_train['Step'], color='red', label='X')
+plt.scatter(strat_data_train['Y'], strat_data_train['Step'], color='green', label='Y')
+plt.scatter(strat_data_train['Z'], strat_data_train['Step'], color='blue', label='Z')
+
+plt.xlabel('Feature Value')
+plt.ylabel('Step Number')
+plt.title('Correlation of X, Y, Z with Step')
+plt.legend()
 plt.show()
 
 
@@ -391,3 +405,4 @@ for i in range(len(X_new)):
     step = model.predict(X_new.iloc[[i]])[0]  
     print(X_new.iloc[i].values.tolist(), "is predicted to be Step", step)
     
+
